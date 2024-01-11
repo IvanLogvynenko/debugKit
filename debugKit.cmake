@@ -5,7 +5,7 @@ FetchContent_Declare(
         GIT_TAG 9ce6f71e4cbd3f28cdd970927f3968b67e3b637b # release 0.0.1 
 )
 FetchContent_GetProperties(debugKit)
-if (NOT azure-storage-lite_POPULATED)
+if (NOT debugKit_POPULATED)
     FetchContent_Populate(debugKit)
     add_subdirectory(${debugKit_SOURCE_DIR} ${debugKit_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif ()
