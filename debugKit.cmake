@@ -2,7 +2,7 @@ include(FetchContent)
 FetchContent_Declare(
         debugKit
         GIT_REPOSITORY https://github.com/IvanLogvynenko/debugKit
-        GIT_TAG <the_tag> 
+        GIT_TAG 9ce6f71e4cbd3f28cdd970927f3968b67e3b637b # release 0.0.1 
 )
 FetchContent_GetProperties(debugKit)
 if (NOT azure-storage-lite_POPULATED)
