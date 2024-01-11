@@ -2,7 +2,7 @@ include(FetchContent)
 FetchContent_Declare(
         debugKit
         GIT_REPOSITORY https://github.com/IvanLogvynenko/debugKit
-        GIT_TAG 9ce6f71e4cbd3f28cdd970927f3968b67e3b637b # release 0.0.1 
+        GIT_TAG 8f106e29565acbeb5fa417e68cf9d919d0e991d2 # release 0.0.1.1
 )
 FetchContent_GetProperties(debugKit)
 if (NOT debugKit_POPULATED)
