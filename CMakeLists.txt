@@ -1,9 +1,40 @@
 cmake_minimum_required(VERSION 3.16)
 project(debugKit)
 
-add_compile_definitions(FULL_LOGGING)
-add_compile_definitions(DEBUG)
-add_compile_definitions(ERROR)
+include(default_headers.cmake)
 
-add_executable(basicCase
-    src/basic/main-basic.cpp)
+set(debug_kit_headers 
+    include/basic.hpp
+    include/Timer.hpp
+)
+
+set(debug_kit_sources
+    src/Timer/Timer.cpp
+)
+
+add_library(debugKit_basic 
+    include/basic.hpp
+
+    include/Timer.hpp
+    src/Timer/Timer.cpp
+)
+
+add_library(debugKit ${debug_kit_headers} ${debug_kit_sources})
+
+target_include_directories(debugKit_basic PUBLIC ${PROJECT_SOURCE_DIR}/include/)
+
+install(DIRECTORY include/ DESTINATION include)
+install(TARGETS debugKit_basic
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+
+target_include_directories(debugKit PUBLIC ${PROJECT_SOURCE_DIR}/include/)
+
+install(DIRECTORY include/ DESTINATION include)
+install(TARGETS debugKit
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+)
