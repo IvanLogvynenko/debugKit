@@ -3,10 +3,7 @@ project(debugKit)
 
 include(default_headers.cmake)
 
-add_library(debugKit 
-    include/basic.hpp
-    include/Timer.hpp
-
+add_library(debugKit
     src/Timer/Timer.cpp
 )
 
