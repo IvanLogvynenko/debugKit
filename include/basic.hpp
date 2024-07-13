@@ -4,7 +4,7 @@
     #define EXECUTABLE_NAME "UNNAMED"
 #endif // !EXECUTABLE_NAME
 
-#ifndef RELEASE
+#ifdef LOGGING
     #define ILOG(x) std::cout << " [ IMPORTANT ] [ " << EXECUTABLE_NAME << " ] : " << x << "\n"; 
 #else
     #define ILOG(x)
