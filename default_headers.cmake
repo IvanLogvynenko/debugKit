@@ -1,3 +1,0 @@
-add_compile_definitions(DEBUG)
-add_compile_definitions(ERROR)
-add_compile_definitions(FULL_LOGGING)

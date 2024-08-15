@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 class Timer {
-private:
+protected:
     bool started = false;
     std::chrono::steady_clock::time_point start_time;
     std::chrono::steady_clock::time_point last_check;
@@ -16,5 +16,5 @@ public:
     /// @brief Get elepsed time, stopping clock
     int64_t stop();
     /// @brief Check if the timer is started
-    inline bool ifStarted() { return started; }
+    inline bool isStarted() { return started; }
 };

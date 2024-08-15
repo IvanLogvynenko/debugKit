@@ -10,37 +10,34 @@ Download a `debugKit.cmake` file to your project directory and add
 ```cmake
 install("debugKit.cmake")
 ```
-to your *CMakeLists.txt* file and from now on every file in `include/` dir should be availible
+to your *CMakeLists.txt* file
 
-To enable 
-``` C++
-LOG()
-``` 
-header, which provides basic logging, you would need to define `FULL_LOGGING` header by adding 
-``` C++
-#define FULL_LOGGING
+## Logger
+
+This lib provides a logger class. Here is an example: 
+```cpp
+Logger logger = Logger();
+logger << "some data to be written" << 42 << std::endl;
 ```
-or
-```cmake
-add_compile_definitions(FULL_LOGGING)
+Notice: using std::endl won't affect performance since I'm handling it manualy. After logger recieves `std::endl` all data before(it is accumulated in the buffer) will be sent to the LoggerThread class that handles all logging. 
+That means that if you pass "\n" your data won't be logged to the output stream right away. Of course all data from buffer is being sent to the logging service in the destructor but I don't think that it is intended behaviour.
+
+### Levels 
+
+There are following levels:
+ - Critical
+ - Debug
+ - Error
+ - Important
+ - Info
+ - Warning
+
+The default level is Info, but can change it by passing any level in logger:
+```cpp
+Logger::debug
 ```
-if you want to set it for all executables/libraries. 
-If not then you can add it to a sertain executable/library by adding
-```cmake
-target_compile_definitions(<target-name> PUBLIC/PRIVATE FULL_LOGGING)
-```
-To set name for an executable to be something different from **Unnamed** you need to set a value for EXECUTABLE_NAME. It should be set by
-```cmake
-target_compile_definitions(<target-name> PRIVATE EXECUTABLE_NAME=<some-name>)
-```
-otherwise, if you have several targets for which you want different names, you would get an error.
-``` C++
-ILOG()
-``` 
-header, which provides logging of important events happend in your code, is enable by default. If you want to disable logging, you should define `RELEASE` header. 
-To enable 
-``` C++
-EL()
-``` 
-header, which provides logging of errors that happen in your code, you would need to define `ERROR` header.
-You can safely remove any of this headers, except for `RELEASE` if you want to create a release version without logging.
+
+### Configuration
+
+You can configure the logger with LoggerConfig.
+`Important`: When LoggerThread get's started(it will happen after a logger dumps the buffer) it will obtain a lock that will last till the thread stops(destruction or some configurable time being idle) and you won't be able to change any setting, moreover the program will get blocked. If you're experiencing any hanging make sure that you configure the logger in the beginning of main. If it is not the case, congrats, you're a shitty coder.
