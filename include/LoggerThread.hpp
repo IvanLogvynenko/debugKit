@@ -35,11 +35,7 @@ private:
     std::mutex new_data_available_mutex;
 	std::condition_variable new_data_available;
 
-	std::atomic_bool is_initialized;
-	std::mutex is_initialized_mutex;
-    std::condition_variable cv_initialized;
-
-	static LoggerThread* instance;
+	std::atomic_bool is_running;
 
 	LoggerThread();
 
