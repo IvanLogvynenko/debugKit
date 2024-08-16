@@ -9,8 +9,6 @@
 
 #include "LoggerThread.hpp"
 
-// [LogLevel] [Executable /path ] [time] >>> message
-
 class Logger
 {
 protected:
@@ -40,7 +38,7 @@ public:
 		// forced to provide an implementation here because it is templete function
     }
 	Logger& operator<<(std::ostream&(*)(std::ostream&));
-	inline Logger& operator<<(std::function<Logger&(Logger&)> function) { return function(*this); }
+	inline Logger& operator<<(Logger*(*function)(Logger*)) { return *function(this); }
 
 	inline void setLevel(LogLevel new_level) { current_level = new_level; }
 	inline LogLevel getLevel() const { return current_level; }

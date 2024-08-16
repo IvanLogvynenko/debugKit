@@ -1,51 +1,52 @@
 #include "LoggerThread.hpp"
 
-LoggerThread::LoggerThread() : is_running(false) {
-	auto conf = LoggerConfig::getInstance();
-	this->main_thread = new std::thread([this, conf]() {
-		is_running = true;
-		while (is_running || !this->log_queue.empty()) {
-			std::cout << "new iteration" << std::endl;
-			std::cout << "checking queue size: " << this->log_queue.size() << std::endl;
-			if (this->log_queue.empty()) {
-				// waiting logic. if no new log available, wait for a while and then check again
-				// if none found stop thread
+LoggerThread::LoggerThread() : is_running(false), stop_thread(true) { this->startThread(); }
+void LoggerThread::startThread() {
+	if (this->is_running) return;
+	this->main_thread = new std::thread([this]() {
+		std::cout << "starting thread" << std::endl;
 
-                std::cout << "No new log available, waiting for " << LOGGER_THREAD_IDLE_TIMEOUT << std::endl;
+		auto conf = LoggerConfig::getInstance();
+		conf->lock();
+		auto stream = conf->getLogStream();
+
+		this->is_running = true;
+		this->stop_thread = false;
+		this->log_thread_started.notify_all();
+
+		while (!this->stop_thread || !this->log_queue.empty()) {
+			if (this->log_queue.empty()) {
 				std::unique_lock<std::mutex> cv_lock(this->new_data_available_mutex);
 				std::cv_status result = this->new_data_available.wait_for(cv_lock, std::chrono::milliseconds(LOGGER_THREAD_IDLE_TIMEOUT));
 
-				std::cout << "waiting ended" << std::endl;
 				if (result == std::cv_status::timeout) {
-					std::cout << "Timeout reached, exiting thread" << std::endl;
-					is_running = !this->log_queue.empty();
+					this->stop_thread = this->log_queue.empty();
 					continue;
-				    // if () {
-					// 	std::cout << "No new log available and timeout reached, exiting thread" << std::endl;
-					// }
-					// else {
-					// 	std::cout << "New log available, continuing iteration" << std::endl;
-					// 	continue;
-					// }
-				}
-				else {
-					std::cout << "New log available, continuing iteration" << std::endl;
-					// continue;
 				}
 			}
+
 			std::unique_lock<std::mutex> queue_lock(this->log_queue_mutex);
 			LogMessage* message = this->log_queue.front();
-			std::cout << "Processing log: " << message->message << std::endl;
 			this->log_queue.pop();
+
 			queue_lock.unlock();
-			// skipping if log level is ignored
 			if (conf->getIgnoredLevels().find(message->level) == conf->getIgnoredLevels().end())
-				*conf->getLogStream() << this->printLog(message);
+				*stream << this->printLog(message);
 			
 			delete message;
 		}
+		std::cout << "stopping thread" << std::endl;
+		this->stop_thread = true;
+		this->is_running = false;
 	});
-	std::cout << "LoggerThread started " << main_thread << std::endl;
+}
+
+
+
+void LoggerThread::awaitStart() {
+	if (this->is_running) return;
+	std::unique_lock<std::mutex> cv_lock(this->log_thread_started_mutex);
+	this->log_thread_started.wait_for(cv_lock, std::chrono::milliseconds(LOGGER_THREAD_START_TIMEOUT));
 }
 
 
@@ -61,59 +62,66 @@ std::string LoggerThread::getStringLevel(LogLevel level) const
 {
 	switch (level)
 	{
-		case LogLevel::CRITICAL: return "CRITICAL";
-		case LogLevel::ERROR: return "ERROR";
-		case LogLevel::DEBUG: return "DEBUG";
-		case LogLevel::INFO: return "INFO";
-		case LogLevel::IMPORTANT: return "IMPORTANT";
-		case LogLevel::WARNING: return "WARNING";
-		default: return "UNKNOWN";
+		case LogLevel::CRITICAL: 	return "CRITICAL ";
+		case LogLevel::ERROR: 		return "  ERROR  ";
+		case LogLevel::DEBUG: 		return "  DEBUG  ";
+		case LogLevel::INFO: 		return "   INFO  ";
+		case LogLevel::IMPORTANT: 	return "IMPORTANT";
+		case LogLevel::WARNING: 	return " WARNING ";
+		default: 					return " UNKNOWN ";
 	}
 }
-std::string LoggerThread::getStringTimestamp(high_resolution_clock::time_point) const
+std::string LoggerThread::getStringTimestamp(high_resolution_clock::time_point timepoint) const
 {
-	auto time_t_timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    
-    std::tm* tm_time = std::localtime(&time_t_timestamp);
+	auto time_t_timestamp = std::chrono::system_clock::to_time_t(timepoint);
+	
+	std::tm* tm_time = std::localtime(&time_t_timestamp);
+	auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timepoint.time_since_epoch()) % 1000;	// auto nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(timepoint.time_since_epoch()) / 1000;
 
-    std::ostringstream oss;
-    oss << std::put_time(tm_time, "%Y-%m-%d %H:%M:%S");
+	std::ostringstream oss;
+	oss << std::put_time(tm_time, "%Y-%m-%d %H:%M:%S");
+	oss << '.' << std::setw(3) << std::setfill('0') << milliseconds.count() << "ms";
+	// oss << timepoint.time_since_epoch().count();
 
-    return oss.str();
+	return oss.str();
 }
 std::string LoggerThread::printLog(LogMessage* message) const
 {
 	std::stringstream ss;
-	ss << " [ " << this->getStringLevel(message->level) 			<< " ] ";
-	ss << " [ " << EXECUTABLE_NAME << message->path 				<< " ] ";
-	ss << " [ " << this->getStringTimestamp(message->timestamp) 	<< " ] ";
-	ss << " >>> " << message->message;
+	ss << "[ " << this->getStringLevel(message->level) 			<< " ]";
+	ss << "[ " << this->getStringTimestamp(message->timestamp) 	<< " ]";
+	ss << "[ " << EXECUTABLE_NAME << message->path 				<< " ]\n";
+	ss << ">>> " << message->message;
     return ss.str();
 }
 
 
 
 void LoggerThread::log(LogMessage* message) {
-	std::cout << "new log" << std::endl;
+	// std::cout << "new log" << std::endl;
+	if (!this->is_running) {
+	    this->startThread();
+		this->awaitStart();
+	}
 
 	std::unique_lock<std::mutex> queue_lock(this->log_queue_mutex);
     this->log_queue.push(message);
 	queue_lock.unlock();
 
     this->new_data_available.notify_all();
-	std::cout << "new log added to queue" << std::endl;
+	// std::cout << "new log added to queue" << std::endl;
 }
 
 
 
 LoggerThread::~LoggerThread() {
-	std::cout << "LoggerThread destructor" << std::endl;
+	this->stop_thread = true;
+	this->new_data_available.notify_all();
 
-    std::cout << "stoping LoggerThread " << main_thread << std::endl;
-	if (this->main_thread != nullptr) 
-	    this->main_thread->join();
+	if (this->main_thread != nullptr) {
+		this->main_thread->join();
 
-	delete this->main_thread;
-	this->main_thread = nullptr;
-	std::cout << "LoggerThread destroyed" << std::endl;
+		delete this->main_thread;
+		this->main_thread = nullptr;
+	}
 }

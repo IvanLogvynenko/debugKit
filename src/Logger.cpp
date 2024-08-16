@@ -1,19 +1,20 @@
 #include "Logger.hpp"
 
-Logger* Logger::debug		(Logger* logger) { logger->setLevel(LogLevel::DEBUG); return logger; }
-Logger* Logger::info		(Logger* logger) { logger->setLevel(LogLevel::INFO); return logger; }
-Logger* Logger::important	(Logger* logger) { logger->setLevel(LogLevel::IMPORTANT); return logger; }
-Logger* Logger::warning		(Logger* logger) { logger->setLevel(LogLevel::WARNING); return logger; }
-Logger* Logger::error		(Logger* logger) { logger->setLevel(LogLevel::ERROR); return logger; }
-Logger* Logger::critical	(Logger* logger) { logger->setLevel(LogLevel::CRITICAL); return logger; }
+Logger* Logger::debug		(Logger* logger) { logger->setLevel(LogLevel::DEBUG); 		return logger; }
+Logger* Logger::info		(Logger* logger) { logger->setLevel(LogLevel::INFO); 		return logger; }
+Logger* Logger::important	(Logger* logger) { logger->setLevel(LogLevel::IMPORTANT); 	return logger; }
+Logger* Logger::warning		(Logger* logger) { logger->setLevel(LogLevel::WARNING); 	return logger; }
+Logger* Logger::error		(Logger* logger) { logger->setLevel(LogLevel::ERROR); 		return logger; }
+Logger* Logger::critical	(Logger* logger) { logger->setLevel(LogLevel::CRITICAL); 	return logger; }
 
 Logger::Logger(std::string path) : 
 	current_level(LogLevel::INFO), 
 	logger_thread(LoggerThread::getInstance()) {
 
-	if (path != "") {
+    logger_thread->awaitStart();
+
+	if (path != "")
 		this->path = " /" + path;
-	}
 }
 Logger::Logger(Logger &other) {
 	if (this == &other)
@@ -34,8 +35,7 @@ Logger &Logger::operator=(const Logger &other)
 	return *this;
 }
 
-Logger &Logger::operator<<(std::ostream &(*func)(std::ostream &))
-{
+Logger &Logger::operator<<(std::ostream &(*func)(std::ostream &)) {
 	if (func == static_cast<std::ostream &(*)(std::ostream &)>(&std::endl)) {
 		this->buffer << "\n";
 		LogMessage* message = new LogMessage(this->buffer.str(), this->path, this->current_level);
@@ -49,7 +49,7 @@ Logger &Logger::operator<<(std::ostream &(*func)(std::ostream &))
 
 Logger::~Logger() {
 	//if there is still something in the buffer, log it
-	std::cout << "Logger destroyed" << std::endl;
+	// std::cout << "Logger destroyed" << std::endl;
     if (this->buffer.str() != "")
 		*this << std::endl;
 	

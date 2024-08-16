@@ -1,10 +1,6 @@
 #ifndef LOG_MESSAGE_HPP
 #define LOG_MESSAGE_HPP
 
-#ifndef EXECUTABLE_NAME
-#define EXECUTABLE_NAME "UNKNOWN"
-#endif // !EXECUTABLE_NAME
-
 #include <string>
 #include <chrono>
 
