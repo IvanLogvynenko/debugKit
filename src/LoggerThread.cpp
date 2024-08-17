@@ -1,11 +1,12 @@
 #include "LoggerThread.hpp"
 
-LoggerThread::LoggerThread() : is_running(false), stop_thread(true) { this->startThread(); }
+LoggerThread::LoggerThread() : 
+	stop_thread(true),
+	is_running(false)
+	{}
 void LoggerThread::startThread() {
 	if (this->is_running) return;
 	this->main_thread = new std::thread([this]() {
-		std::cout << "starting thread" << std::endl;
-
 		auto conf = LoggerConfig::getInstance();
 		conf->lock();
 		auto stream = conf->getLogStream();
@@ -35,7 +36,6 @@ void LoggerThread::startThread() {
 			
 			delete message;
 		}
-		std::cout << "stopping thread" << std::endl;
 		this->stop_thread = true;
 		this->is_running = false;
 	});
