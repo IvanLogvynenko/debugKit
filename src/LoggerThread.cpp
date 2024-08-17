@@ -88,9 +88,9 @@ std::string LoggerThread::getStringTimestamp(high_resolution_clock::time_point t
 std::string LoggerThread::printLog(LogMessage* message) const
 {
 	std::stringstream ss;
-	ss << "[ " << this->getStringLevel(message->level) 			<< " ]";
-	ss << "[ " << this->getStringTimestamp(message->timestamp) 	<< " ]";
-	ss << "[ " << EXECUTABLE_NAME << message->path 				<< " ]\n";
+	ss << "[ " << this->getStringLevel(message->level) 								<< " ]";
+	ss << "[ " << this->getStringTimestamp(message->timestamp) 						<< " ]";
+	ss << "[ " << LoggerConfig::getInstance()->getExecutableName() << message->path << " ]\n";
 	ss << ">>> " << message->message;
     return ss.str();
 }

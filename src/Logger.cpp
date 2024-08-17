@@ -14,7 +14,7 @@ Logger::Logger(std::string path) :
     logger_thread->awaitStart();
 
 	if (path != "")
-		this->path = " /" + path;
+		this->path = " " + path;
 }
 Logger::Logger(Logger &other) {
 	if (this == &other)

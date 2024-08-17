@@ -33,7 +33,11 @@ LoggerConfig *LoggerConfig::logToFile(const std::string &file_path) {
 	log_stream = new_stream;
 	return this;
 }
-
+LoggerConfig *LoggerConfig::setExecutableName(const char *name) {
+	if (is_locked) throw std::runtime_error("Logger can be configured only before Logging is started");
+	this->executable_name = name;
+	return this;
+}
 
 
 LoggerConfig::~LoggerConfig() {

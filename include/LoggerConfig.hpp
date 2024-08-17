@@ -19,7 +19,7 @@ class LoggerConfig
 private:
 	std::ostream* log_stream;
 	std::unordered_set<LogLevel> ignored_log_levels;
-
+	std::string executable_name = "UNKNOWN";
 
 	bool is_locked;
 
@@ -31,10 +31,12 @@ public:
 	LoggerConfig* ignoreLevels(std::initializer_list<LogLevel> levels);
 	LoggerConfig* setLogStream(std::ostream* stream);
 	LoggerConfig* logToFile(const std::string& file_path);
+	LoggerConfig* setExecutableName(const char* name);
 
 
 	inline const std::unordered_set<LogLevel>& getIgnoredLevels() const { return this->ignored_log_levels; }
 	inline std::ostream* getLogStream() const { return this->log_stream; }
+	inline const std::string& getExecutableName() const { return this->executable_name; }
 
 	inline void lock() { this->is_locked = true; }
 };
