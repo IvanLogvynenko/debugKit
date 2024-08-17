@@ -10,10 +10,3 @@ add_library(debugKit
     src/LoggerConfig.cpp
 )
 target_include_directories(debugKit PUBLIC include)
-
-add_executable(main
-    src/main.cpp
-)
-target_compile_definitions(debugKit PRIVATE EXECUTABLE_NAME="TEST")
-target_link_libraries(main PRIVATE debugKit)
-target_include_directories(main PRIVATE include/)
