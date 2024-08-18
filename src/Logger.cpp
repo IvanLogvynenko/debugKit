@@ -41,6 +41,7 @@ Logger &Logger::operator<<(std::ostream &(*func)(std::ostream &)) {
 		LogMessage* message = new LogMessage(this->buffer.str(), this->path, this->current_level);
 		this->logger_thread->log(message);
 		this->buffer.str(std::string());
+		this->current_level = LogLevel::INFO;
 		return *this;
 	}
 	this->buffer << func;
