@@ -119,7 +119,7 @@ LoggerThread::~LoggerThread() {
 	this->new_data_available.notify_all();
 
 	if (this->main_thread != nullptr) {
-		this->main_thread->join();
+		this->main_thread.load()->join();
 
 		delete this->main_thread;
 		this->main_thread = nullptr;

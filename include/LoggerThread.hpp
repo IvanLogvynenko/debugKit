@@ -38,7 +38,7 @@ private:
 	std::mutex log_queue_mutex;
 	std::queue<LogMessage*> log_queue;
 
-	std::thread* main_thread;
+	std::atomic<std::thread*> main_thread;
 
     std::mutex new_data_available_mutex;
 	std::condition_variable new_data_available;
