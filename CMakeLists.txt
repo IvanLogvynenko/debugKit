@@ -9,4 +9,4 @@ add_library(debugKit
     src/LoggerThread.cpp
     src/LoggerConfig.cpp
 )
-target_include_directories(debugKit PUBLIC include)
+target_include_directories(debugKit PRIVATE include)

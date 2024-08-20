@@ -31,6 +31,10 @@ public:
 	static Logger* error(Logger*);
 	static Logger* critical(Logger*);
 
+	static void flush() {
+		delete LoggerThread::getInstance();
+	}
+
 	template <typename T>
     Logger& operator<<(const T& value) {
         buffer << value;
