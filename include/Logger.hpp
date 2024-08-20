@@ -32,7 +32,7 @@ public:
 	static Logger* critical(Logger*);
 
 	static void flush() {
-		delete LoggerThread::getInstance();
+		LoggerThread::getInstance()->flush();
 	}
 
 	template <typename T>

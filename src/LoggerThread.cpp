@@ -113,8 +113,7 @@ void LoggerThread::log(LogMessage* message) {
 }
 
 
-
-LoggerThread::~LoggerThread() {
+void LoggerThread::flush() {
 	this->stop_thread = true;
 	this->new_data_available.notify_all();
 
@@ -124,4 +123,7 @@ LoggerThread::~LoggerThread() {
 		delete this->main_thread;
 		this->main_thread = nullptr;
 	}
+}
+LoggerThread::~LoggerThread() {
+	this->flush();
 }

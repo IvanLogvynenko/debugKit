@@ -64,6 +64,7 @@ public:
 
 	void awaitStart();
 
+	void flush();
 	~LoggerThread();
 
 	static LoggerThread* getInstance();
