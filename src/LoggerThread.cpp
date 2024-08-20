@@ -117,7 +117,7 @@ void LoggerThread::flush() {
 	this->stop_thread = true;
 	this->new_data_available.notify_all();
 
-	if (this->main_thread != nullptr) {
+	if (this->main_thread) {
 		this->main_thread.load()->join();
 
 		delete this->main_thread;
