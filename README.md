@@ -40,4 +40,4 @@ Logger::debug
 ### Configuration
 
 You can configure the logger with LoggerConfig.
-`Important`: When LoggerThread get's started(it will happen after a logger dumps the buffer) it will obtain a lock that will last till the thread stops(destruction or some configurable time being idle) and you won't be able to change any setting, moreover the program will get blocked. If you're experiencing any hanging make sure that you configure the logger in the beginning of main. If it is not the case, congrats, you're a shitty coder.
+`Important`: When LoggerThread get's started(it will happen after a logger dumps the buffer) it will skip all changes you make in the configuration, just because it doesn't like you. Enjoy, pull req will almost definitely be accepted
