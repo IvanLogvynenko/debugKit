@@ -1,8 +1,6 @@
 #include "LogMessage.hpp"
 
-LogMessage::LogMessage(std::string message, std::string path, LogLevel level) :
-	message(std::move(message)),
-	path(std::move(path)),
-	level(std::move(level)),
-	timestamp(high_resolution_clock::now()) {}
-
+namespace Logger {
+LogMessage::LogMessage(std::string message, std::string path, LogLevel level)
+    : message(message), path(path), level(level), timestamp(high_resolution_clock::now()) {}
+} // namespace Logger

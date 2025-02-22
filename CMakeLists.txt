@@ -42,6 +42,6 @@ if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/install_manifest.txt")
     )
 else()
     add_custom_target(uninstall
-        COMMAND echo "install_manifest.txt не найден. Удаление невозможно."
+        COMMAND echo "install_manifest.txt not found. Uninstall impossible."
     )
 endif()
