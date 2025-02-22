@@ -10,7 +10,7 @@ using std::chrono::high_resolution_clock;
 
 /// @brief Simple class to represent a log message
 class LogMessage {
-  public:
+public:
     std::string message;
     std::string path;
     LogLevel level;

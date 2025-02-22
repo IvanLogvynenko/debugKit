@@ -3,11 +3,11 @@
 
 #ifndef LOGGER_THREAD_IDLE_TIMEOUT
 #define LOGGER_THREAD_IDLE_TIMEOUT 10000 // 10 seconds
-#endif					 // !LOGGER_THREAD_IDLE_TIMEOUT
+#endif // !LOGGER_THREAD_IDLE_TIMEOUT
 
 #ifndef LOGGER_THREAD_START_TIMEOUT
 #define LOGGER_THREAD_START_TIMEOUT 5 // 5 miliseconds
-#endif				      // !LOGGER_THREAD_START_TIMEOUT
+#endif // !LOGGER_THREAD_START_TIMEOUT
 
 #ifndef EXECUTABLE_NAME
 #define EXECUTABLE_NAME "UNKNOWN"
@@ -34,7 +34,7 @@ using namespace std::chrono;
 
 namespace Logger {
 class LoggerThread {
-  private:
+private:
     std::mutex log_queue_mutex;
     std::queue<LogMessage *> log_queue;
 
@@ -59,7 +59,7 @@ class LoggerThread {
 
     std::string printLog(LogMessage *) const;
 
-  public:
+public:
     LoggerThread(LoggerThread &) = delete;
     LoggerThread &operator=(LoggerThread &) = delete;
 

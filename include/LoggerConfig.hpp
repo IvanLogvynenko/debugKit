@@ -16,7 +16,7 @@
 namespace Logger {
 /// @brief Data holder for logger thread
 class LoggerConfig {
-  private:
+private:
     std::ostream *log_stream;
     std::unordered_set<LogLevel> ignored_log_levels;
     std::string executable_name = "UNKNOWN";
@@ -25,7 +25,7 @@ class LoggerConfig {
 
     LoggerConfig();
 
-  public:
+public:
     static LoggerConfig *getInstance();
     ~LoggerConfig();
 
@@ -34,9 +34,7 @@ class LoggerConfig {
     LoggerConfig *logToFile(const std::string &file_path);
     LoggerConfig *setExecutableName(const char *name);
 
-    inline const std::unordered_set<LogLevel> &getIgnoredLevels() const {
-	return this->ignored_log_levels;
-    }
+    inline const std::unordered_set<LogLevel> &getIgnoredLevels() const { return this->ignored_log_levels; }
     inline std::ostream *getLogStream() const { return this->log_stream; }
     inline const std::string &getExecutableName() const { return this->executable_name; }
 

@@ -5,12 +5,12 @@
 
 namespace Logger {
 class Timer {
-  protected:
+protected:
     bool started = false;
     std::chrono::steady_clock::time_point start_time;
     std::chrono::steady_clock::time_point last_check;
 
-  public:
+public:
     /// @brief Starts the timer
     void start();
     /// @brief Ret elepsed time from last check, without stopping clock

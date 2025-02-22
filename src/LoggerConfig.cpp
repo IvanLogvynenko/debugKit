@@ -9,43 +9,35 @@ LoggerConfig *LoggerConfig::getInstance() {
 LoggerConfig::LoggerConfig() : log_stream(&std::cout), ignored_log_levels() {}
 
 LoggerConfig *LoggerConfig::setLogStream(std::ostream *stream) {
-    if (is_locked)
-	throw std::runtime_error("Logger can be configured only before Logging is started");
+    if (is_locked) { throw std::runtime_error("Logger can be configured only before Logging is started"); }
     log_stream = stream;
     return this;
 }
 LoggerConfig *LoggerConfig::ignoreLevels(std::initializer_list<LogLevel> levels) {
-    if (is_locked)
-	throw std::runtime_error("Logger can be configured only before Logging is started");
-    for (LogLevel level : levels)
-	this->ignored_log_levels.insert(level);
+    if (is_locked) { throw std::runtime_error("Logger can be configured only before Logging is started"); }
+    for (LogLevel level : levels) { this->ignored_log_levels.insert(level); }
     return this;
 }
 LoggerConfig *LoggerConfig::logToFile(const std::string &file_path) {
-    if (is_locked)
-	throw std::runtime_error("Logger can be configured only before Logging is started");
-    if (log_stream != &std::cout) {
-	delete log_stream;
-    }
+    if (is_locked) { throw std::runtime_error("Logger can be configured only before Logging is started"); }
+    if (log_stream != &std::cout) { delete log_stream; }
     auto new_stream = new std::ofstream(file_path);
-    if (!new_stream->is_open())
-	throw std::runtime_error("Failed to open log file: " + file_path);
+    if (!new_stream->is_open()) { throw std::runtime_error("Failed to open log file: " + file_path); }
 
     log_stream = new_stream;
     return this;
 }
 LoggerConfig *LoggerConfig::setExecutableName(const char *name) {
-    if (is_locked)
-	throw std::runtime_error("Logger can be configured only before Logging is started");
+    if (is_locked) { throw std::runtime_error("Logger can be configured only before Logging is started"); }
     this->executable_name = name;
     return this;
 }
 
 LoggerConfig::~LoggerConfig() {
     if (log_stream != &std::cout) {
-	*log_stream << std::endl;
-	log_stream->flush();
-	delete log_stream;
+        *log_stream << std::endl;
+        log_stream->flush();
+        delete log_stream;
     }
 }
 } // namespace Logger
