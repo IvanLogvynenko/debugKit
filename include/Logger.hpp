@@ -5,8 +5,6 @@
 
 #include <sstream>
 
-#include <functional>
-
 #include "LoggerThread.hpp"
 
 namespace Logger {
